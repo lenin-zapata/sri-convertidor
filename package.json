@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "build:css": "npx -y -p tailwindcss@latest tailwindcss -i ./src/index.css -o ./dist/output.css --minify",
-    "dev:css": "npx -y -p tailwindcss@latest tailwindcss -i ./src/index.css -o ./dist/output.css --watch"
+    "dev:css": "npx -y -p tailwindcss@latest tailwindcss -i ./src/index.css -o ./dist/output.css --watch",
+    "deploy": "npx wrangler deploy --assets ./dist"
   },
   "dependencies": {
     "lucide-react": "^0.562.0",
