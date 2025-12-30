@@ -1,5 +1,6 @@
-import React, { useCallback, useState } from 'react'
-import './App.css'
+import React from 'react'
+import { useCallback, useState } from 'react'
+import './App.css' 
 import './index.css'
 import { FileText, UploadCloud, DownloadCloud } from 'lucide-react'
 // Use xlsx-js-style to support styles (fills, borders, number formats)
@@ -31,6 +32,7 @@ type InvoiceRecord = {
   identificacionComprador?: string
   fechaEmision: string
   secuencial: string
+  ruc?: string
   estab?: string
   ptoEmi?: string
   noFactura?: string
@@ -44,7 +46,7 @@ type InvoiceRecord = {
   items: ItemRecord[]
 }
 
-export default function App(): JSX.Element {
+export default function App(): React.ReactElement {
   const [records, setRecords] = useState<InvoiceRecord[]>([])
   const [processing, setProcessing] = useState(false)
   const [errors, setErrors] = useState<string[]>([])
@@ -127,8 +129,9 @@ export default function App(): JSX.Element {
           let candidate: number | null = null
           for (let i = 0; i < impuestos.length; i++) {
             const imp = impuestos[i]
-            const codigo = imp.getElementsByTagName('codigo')[0]?.textContent?.trim() ?? ''
-            if (codigo === '2' || codigo === 2) {
+            const codigoText = imp.getElementsByTagName('codigo')[0]?.textContent?.trim() ?? ''
+            const codigoVal = parseInt(codigoText, 10)
+            if (!isNaN(codigoVal) && codigoVal === 2) {
               const valorRaw = imp.getElementsByTagName('valor')[0]?.textContent?.trim() ?? '0'
               const valor = parseFloat(valorRaw.replace(/,/g, '')) || 0
               if (valor > 0) {
@@ -188,8 +191,9 @@ export default function App(): JSX.Element {
                 const impuestoNodes = impuestosNode.getElementsByTagName('impuesto')
                 for (let ii = 0; ii < impuestoNodes.length; ii++) {
                   const imp = impuestoNodes[ii]
-                  const codigoImp = imp.getElementsByTagName('codigo')[0]?.textContent?.trim() ?? ''
-                  if (codigoImp === '2' || codigoImp === 2) {
+                  const codigoImpText = imp.getElementsByTagName('codigo')[0]?.textContent?.trim() ?? ''
+                  const codigoImpVal = parseInt(codigoImpText, 10)
+                  if (!isNaN(codigoImpVal) && codigoImpVal === 2) {
                     detalleIva = parseFloat(imp.getElementsByTagName('valor')[0]?.textContent?.trim() ?? '0') || 0
                     break
                   }
@@ -209,6 +213,7 @@ export default function App(): JSX.Element {
       const rec: InvoiceRecord = {
         issuerRazonSocial: razonSocial,
         issuerRUC: ruc,
+        ruc: ruc || undefined,
         issuerNombreComercial: nombreComercial || undefined,
         issuerDirMatriz: dirMatriz || undefined,
         numeroAutorizacion: numeroAutorizacion || undefined,
@@ -252,7 +257,7 @@ export default function App(): JSX.Element {
         const xmlDoc = parser.parseFromString(text, 'text/xml')
         const facturaNodes = Array.from(xmlDoc.getElementsByTagName('factura'))
         if (facturaNodes.length > 0) {
-          facturaNodes.forEach((node, idx) => {
+          facturaNodes.forEach((node) => {
             const serialized = node.outerHTML
             const rec = parseInvoiceFromXml(serialized, f.name)
             if (rec) out.push(rec)
