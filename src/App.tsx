@@ -51,9 +51,33 @@ export default function App(): React.ReactElement {
   const [processing, setProcessing] = useState(false)
   const [errors, setErrors] = useState<string[]>([])
 
+  // --- NUEVO ESTADO PARA LA PUBLICIDAD ---
+  const [adShown, setAdShown] = useState(false)
+
   const reset = () => {
     setRecords([])
     setErrors([])
+  }
+
+  // --- NUEVA FUNCIÓN PARA EL CLIC DEL BOTÓN ---
+  const handleSelectFilesClick = (e: React.MouseEvent) => {
+    // Si NO se ha mostrado el anuncio todavía...
+    if (!adShown) {
+      e.preventDefault()
+      e.stopPropagation()
+      
+      // Abrimos tu enlace en una nueva pestaña
+      window.open('https://otieu.com/4/10321796', '_blank')
+      
+      // Marcamos que ya se mostró para la próxima
+      setAdShown(true)
+      
+      // Importante: No hacemos nada más, así que el selector de archivos NO se abre esta vez
+      return
+    }
+
+    // Si ya se mostró el anuncio, abrimos el selector de archivos normalmente
+    document.getElementById('file-input')?.click()
   }
 
   const parseInvoiceFromXml = (text: string, filename?: string): InvoiceRecord | null => {
@@ -438,14 +462,14 @@ export default function App(): React.ReactElement {
       <header className="bg-white shadow">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center gap-3">
           <FileText className="text-sky-600" />
-          <h1 className="text-xl font-semibold text-sky-700">SRI XML a Excel Converter</h1>
+          <h1 className="text-xl font-semibold text-sky-700">SRI XML a Excel Convertidor</h1>
         </div>
       </header>
 
       <main className="max-w-5xl mx-auto px-4 py-6">
         <div className="bg-gray-100 p-4 My-4 text-center text-sm text-gray-500">
           {/* Monetag: meta added into document head */}
-          Espacio para Publicidad
+          {/*Espacio para Publicidad*/}
         </div>
 
         <section className="bg-white rounded shadow p-6">
@@ -456,7 +480,7 @@ export default function App(): React.ReactElement {
             </div>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => document.getElementById('file-input')?.click()}
+                onClick={handleSelectFilesClick} // <--- CAMBIO AQUÍ: Usamos la nueva función
                 className="inline-flex items-center gap-2 bg-white border border-gray-200 text-slate-700 px-3 py-2 rounded hover:bg-gray-50"
               >
                 <UploadCloud className="w-4 h-4" />
@@ -545,7 +569,9 @@ export default function App(): React.ReactElement {
           </div>
         </section>
 
-        <div className="bg-gray-100 p-4 My-4 text-center text-sm text-gray-500">Espacio para Publicidad</div>
+        <div className="bg-gray-100 p-4 My-4 text-center text-sm text-gray-500">
+          {/*Espacio para Publicidad*/}
+        </div>
       </main>
 
       <footer className="text-center text-xs text-gray-400 py-6">
