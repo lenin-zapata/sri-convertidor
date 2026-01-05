@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sri-convertidor.lenin-zapata-1993.workers.dev/sitemap.xml
